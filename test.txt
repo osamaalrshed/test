@@ -4,4 +4,6 @@ branch2
 branch 3
 merge2
 merge5
+merge
+1
 merge 6
