@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QuickSumm — AI Page Summarizer for Chrome</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fafafa;color:#1e1e2e}
+  .hero{background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);padding:80px 24px 60px;text-align:center;color:white}
+  .hero h1{font-size:clamp(32px,5vw,56px);font-weight:800;letter-spacing:-1px;margin-bottom:16px}
+  .hero p{font-size:20px;opacity:0.9;max-width:560px;margin:0 auto 36px;line-height:1.5}
+  .btn-primary{display:inline-block;background:white;color:#6366f1;padding:16px 36px;border-radius:12px;font-size:18px;font-weight:700;text-decoration:none;transition:transform .15s,box-shadow .15s}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.2)}
+  .btn-secondary{display:inline-block;background:transparent;color:white;border:2px solid rgba(255,255,255,.5);padding:14px 28px;border-radius:12px;font-size:16px;font-weight:600;text-decoration:none;margin-left:12px}
+  .price-tag{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:6px 16px;font-size:14px;margin-bottom:24px;letter-spacing:.5px}
+  .demo{max-width:720px;margin:60px auto;padding:0 24px}
+  .demo h2{font-size:28px;font-weight:700;text-align:center;margin-bottom:8px}
+  .demo .sub{text-align:center;color:#64748b;margin-bottom:36px;font-size:16px}
+  .demo-box{background:white;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);overflow:hidden}
+  .demo-bar{background:#f1f5f9;padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #e2e8f0}
+  .demo-dot{width:12px;height:12px;border-radius:50%}
+  .demo-dot.r{background:#f87171}
+  .demo-dot.y{background:#fbbf24}
+  .demo-dot.g{background:#4ade80}
+  .demo-url{flex:1;background:white;border-radius:6px;padding:6px 12px;font-size:12px;color:#64748b;border:1px solid #e2e8f0}
+  .demo-popup{padding:20px;display:flex;gap:16px;align-items:flex-start}
+  .demo-ext{width:200px;flex-shrink:0;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px}
+  .demo-ext-logo{font-size:14px;font-weight:700;color:#6366f1;margin-bottom:10px}
+  .demo-ext-btn{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;border-radius:7px;padding:9px;width:100%;font-size:12px;font-weight:600;cursor:pointer;margin-bottom:10px}
+  .demo-result{flex:1;font-size:13px;color:#374151;line-height:1.6}
+  .demo-result p{margin-bottom:6px;padding-left:12px;border-left:3px solid #6366f1}
+
+  .features{background:white;padding:64px 24px}
+  .features-grid{max-width:840px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px}
+  .features h2{text-align:center;font-size:28px;font-weight:700;margin-bottom:40px;max-width:840px;margin-left:auto;margin-right:auto}
+  .feature-card{text-align:center;padding:24px 16px}
+  .feature-icon{font-size:36px;margin-bottom:14px}
+  .feature-card h3{font-size:16px;font-weight:700;margin-bottom:8px}
+  .feature-card p{font-size:14px;color:#64748b;line-height:1.5}
+
+  .pricing{padding:64px 24px;max-width:840px;margin:0 auto;text-align:center}
+  .pricing h2{font-size:28px;font-weight:700;margin-bottom:8px}
+  .pricing .sub{color:#64748b;margin-bottom:44px;font-size:16px}
+  .plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:560px;margin:0 auto 32px}
+  .plan{border-radius:14px;padding:28px 24px;text-align:left}
+  .plan.free{border:1.5px solid #e2e8f0;background:#fafafa}
+  .plan.pro{border:2px solid #6366f1;background:#f5f3ff}
+  .plan-name{font-size:14px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+  .plan-price{font-size:36px;font-weight:800;color:#1e1e2e;margin-bottom:4px}
+  .plan-price span{font-size:16px;font-weight:400;color:#64748b}
+  .plan-desc{font-size:13px;color:#64748b;margin-bottom:20px}
+  .plan-feature{font-size:13px;color:#374151;margin-bottom:8px;display:flex;align-items:flex-start;gap:8px}
+  .plan-feature::before{content:"✓";color:#6366f1;font-weight:700;flex-shrink:0}
+  .plan.free .plan-feature::before{color:#94a3b8}
+  .cta-btn{display:inline-block;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;padding:16px 48px;border-radius:12px;font-size:18px;font-weight:700;text-decoration:none;transition:opacity .15s,transform .15s}
+  .cta-btn:hover{opacity:.9;transform:translateY(-1px)}
+
+  .howto{background:white;padding:64px 24px}
+  .howto h2{font-size:28px;font-weight:700;text-align:center;margin-bottom:40px}
+  .steps{max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+  .step{display:flex;gap:16px;align-items:flex-start}
+  .step-num{width:36px;height:36px;background:#6366f1;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+  .step-text h3{font-size:15px;font-weight:600;margin-bottom:4px}
+  .step-text p{font-size:14px;color:#64748b;line-height:1.5}
+  .step-text a{color:#6366f1;text-decoration:none}
+  .step-text a:hover{text-decoration:underline}
+
+  footer{text-align:center;padding:32px 24px;color:#94a3b8;font-size:13px;background:#f1f5f9}
+  footer a{color:#64748b;text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="price-tag">⚡ Chrome Extension</div>
+  <h1>Summarize any webpage<br>in one click</h1>
+  <p>QuickSumm uses AI to give you the key points of any article, research paper, or documentation — instantly.</p>
+  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=osamaalrshed%40gmail.com&item_name=QuickSumm+Pro+-+Unlimited+AI+Summarizer&amount=9.00&currency_code=USD&no_note=1" class="btn-primary" id="buyBtn" target="_blank">Get Pro — $9 one-time</a>
+  <a href="#how" class="btn-secondary">See how it works</a>
+</div>
+
+<div class="demo">
+  <h2>What it looks like</h2>
+  <p class="sub">Click the extension icon on any page. Get a summary in seconds.</p>
+  <div class="demo-box">
+    <div class="demo-bar">
+      <div class="demo-dot r"></div>
+      <div class="demo-dot y"></div>
+      <div class="demo-dot g"></div>
+      <div class="demo-url">en.wikipedia.org/wiki/Artificial_intelligence</div>
+    </div>
+    <div class="demo-popup">
+      <div class="demo-ext">
+        <div class="demo-ext-logo">⚡ QuickSumm</div>
+        <button class="demo-ext-btn">⚡ Summarize This Page</button>
+        <div style="font-size:11px;color:#64748b;text-align:center">✨ Pro · Unlimited</div>
+      </div>
+      <div class="demo-result">
+        <p>AI refers to the simulation of human intelligence in machines programmed to think and learn.</p>
+        <p>The field was founded as an academic discipline in 1956 and has gone through multiple waves of optimism and funding cuts (AI winters).</p>
+        <p>Machine learning — where systems learn from data — became the dominant paradigm after 2012.</p>
+        <p>Large language models like GPT-4 and Claude represent the latest generation, capable of generating text, code, and reasoning through complex problems.</p>
+        <p>Key ethical concerns include algorithmic bias, job displacement, and AI safety as systems grow more capable.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="features">
+  <h2>Everything you need, nothing you don't</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>One click</h3>
+      <p>Click the icon on any page. Summary appears in under 3 seconds.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <h3>Three modes</h3>
+      <p>Summary (5 bullets), Key Points, or TL;DR. You choose the format.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌐</div>
+      <h3>Works everywhere</h3>
+      <p>Articles, docs, research papers, Wikipedia, news — any page with text.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🖱️</div>
+      <h3>Right-click too</h3>
+      <p>Select any text on a page, right-click → "Summarize selection."</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>Your data stays yours</h3>
+      <p>Uses your own Anthropic API key. Nothing stored on our servers.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">♾️</div>
+      <h3>Lifetime access</h3>
+      <p>One-time purchase. No subscription. Works forever.</p>
+    </div>
+  </div>
+</div>
+
+<div class="pricing">
+  <h2>Simple, fair pricing</h2>
+  <p class="sub">Start free. Upgrade when you're ready.</p>
+  <div class="plan-grid">
+    <div class="plan free">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">$0</div>
+      <div class="plan-desc">Try it risk-free</div>
+      <div class="plan-feature">15 lifetime summaries</div>
+      <div class="plan-feature">All 3 summary modes</div>
+      <div class="plan-feature">Right-click support</div>
+    </div>
+    <div class="plan pro">
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">$9 <span>once</span></div>
+      <div class="plan-desc">Unlimited, forever</div>
+      <div class="plan-feature">Unlimited summaries</div>
+      <div class="plan-feature">All 3 summary modes</div>
+      <div class="plan-feature">Right-click support</div>
+      <div class="plan-feature">All future updates</div>
+    </div>
+  </div>
+  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=osamaalrshed%40gmail.com&item_name=QuickSumm+Pro+-+Unlimited+AI+Summarizer&amount=9.00&currency_code=USD&no_note=1" class="cta-btn" id="ctaBtn" target="_blank">Get QuickSumm Pro — $9 via PayPal</a>
+</div>
+
+<div id="how" class="howto">
+  <h2>How to get started</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">
+        <h3>Buy and download</h3>
+        <p>Purchase Pro and download the extension zip file from your Gumroad receipt email.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">
+        <h3>Load in Chrome</h3>
+        <p>Go to <code>chrome://extensions</code> → enable Developer Mode → click "Load unpacked" → select the unzipped folder.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        <h3>Add your API key</h3>
+        <p>Get a free Anthropic API key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a> — paste it in the extension on first run.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text">
+        <h3>Summarize everything</h3>
+        <p>Click the ⚡ icon on any page. Done.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>QuickSumm · Questions? <a href="mailto:osamaalrshed@gmail.com">osamaalrshed@gmail.com</a></p>
+</footer>
+
+</body>
+</html>
